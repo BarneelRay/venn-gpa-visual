@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Barneel's Domain GPA Venn</title>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://benfred.github.io/venn.js/venn.js"></script>
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+
+    h2 {
+      color: #1abc9c;
+      font-size: 28px;
+    }
+
+    .venntooltip {
+      position: absolute;
+      background: #222;
+      color: #0f0;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      box-shadow: 0 0 10px #0f0;
+      pointer-events: none;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    svg {
+      display: block;
+      margin: auto;
+      background: #111;
+    }
+
+    .venn path {
+      fill-opacity: 0.25;
+      stroke-width: 0;
+    }
+
+    .venn text {
+      fill: #fff;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px #000;
+      font-size: 16px;
+    }
+
+    #subject-list {
+      margin-top: 40px;
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    #subject-list b {
+      color: #1abc9c;
+    }
+
+    ul li {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Barneel's Domain GPA Venn</h2>
+  <div id="venn"></div>
+
+  <div id="subject-list">
+    <h3>📘 Domain-wise Subject List with Grades</h3>
+    <ul>
+      <li><b>CS:</b> Python (C), Java (S), OOP (A), OOP Lab (A), OS (B), OS Lab (B), Compiler (B), Compiler Lab (B), CN (B), CN Lab (A), DBMS (A), DBMS Lab (S), DAA (A), DAA Lab (B), DSA (A), DSA Lab (C), TOC (B), SE (A), SE Lab (A), RPA (A), RPA Lab (A), Crypto (B), Crypto Lab (A), CP I (B), CP II (B)</li>
+      <li><b>AIR:</b> AI (A), Cognitive Robotics (S), CR Lab (A), Perception (B), Perception Lab (B), RPA (A), RPA Lab (A), Robot Prog (A), RP Lab (A), Drones (C), Drone Lab (B), EEG I (A), EEG II (A), SE (A), SE Lab (A), DBMS (A), DBMS Lab (S), Embedded (A), Sensors (A), Sensor Lab (A), IoT (A), IoT Analyst (S), Design Project (S), Cognitive Psych (B), Humanoid Robotics (P), Internship (A)</li>
+      <li><b>EEE:</b> BE (A), BE Lab (S), BEE (B), BEE Lab (S), Digital Sys (A), DS Lab (A), Microproc (B), Microproc Lab (B), Embedded (A), Sensors (A), Sensor Lab (A), IoT (A), IoT Analyst (S)</li>
+      <li><b>MATH:</b> Calculus (A), Calc Lab (B), DE & Transforms (C), LA & CV (B), P&S (A), P&S Lab (A), DMGT (A), TOC (B), DSA (A), DAA (A), DAA Lab (B), Compiler (B), Compiler Lab (B), EEG I (A), EEG II (A)</li>
+      <li><b>SOFT:</b> English Comm (B), English Lab (S), TRW (B), Constitution (P), Ethics (P), Env Sci (P), ETK (P), Eng Expl (P), German I (C), QSkills I (A), QSkills II (C), QL Skills I (A), QL Skills II (B), Cognitive Psych (B)</li>
+      <li><b>NGC:</b> Env Sci (P), ETK (P), Eng Expl (P), Intro to Eng (P), Ethics (P), Humanoid Robotics (P)</li>
+      <li><b>NPTEL:</b> GCP Cloud (C)</li>
+    </ul>
+  </div>
+
+  <script>
+    const sets = [
+      { sets: ['CS'], size: 25, label: "CS (8.51 GPA)" },
+      { sets: ['AIR'], size: 27, label: "AIR (8.96 GPA)" },
+      { sets: ['EEE'], size: 13, label: "EEE (8.92 GPA)" },
+      { sets: ['MATH'], size: 15, label: "MATH (8.50 GPA)" },
+      { sets: ['SOFT'], size: 14, label: "SOFT (8.81 GPA)" },
+      { sets: ['NGC'], size: 6, label: "NGC (10.00 GPA)" },
+
+      { sets: ['CS','AIR'], size: 6, label: "CS ∩ AIR (9.09 GPA)" },
+      { sets: ['CS','MATH'], size: 6, label: "CS ∩ MATH (8.43 GPA)" },
+      { sets: ['AIR','EEE'], size: 5, label: "AIR ∩ EEE (9.20 GPA)" },
+      { sets: ['AIR','MATH'], size: 3, label: "AIR ∩ MATH (9.00 GPA)" },
+      { sets: ['AIR','SOFT'], size: 1, label: "AIR ∩ SOFT (8.00 GPA)" },
+      { sets: ['AIR','NGC'], size: 1, label: "AIR ∩ NGC (10.00 GPA)" }
+    ];
+
+    const chart = venn.VennDiagram().width(800).height(600);
+    const div = d3.select("#venn").datum(sets).call(chart);
+
+    const tooltip = d3.select("body").append("div")
+      .attr("class", "venntooltip");
+
+    div.selectAll("g")
+      .on("mouseover", function(d) {
+        tooltip.style("opacity", 1).text(d.label);
+        d3.select(this).select("path")
+          .style("stroke", "#0f0")
+          .style("stroke-width", 3)
+          .style("fill-opacity", 0.4);
+      })
+      .on("mousemove", function() {
+        tooltip.style("left", (d3.event.pageX + 10) + "px")
+               .style("top", (d3.event.pageY - 20) + "px");
+      })
+      .on("mouseout", function() {
+        tooltip.style("opacity", 0);
+        d3.select(this).select("path")
+          .style("stroke", "none")
+          .style("stroke-width", 0)
+          .style("fill-opacity", 0.25);
+      });
+  </script>
+
+</body>
+</html>
