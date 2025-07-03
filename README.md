@@ -13,4 +13,4 @@ An interactive Venn diagram visualizing my B.Tech GPA distribution across core d
 **S = 10**, **A = 9**, **B = 8**, **C = 7**, **P = 10** (for pass/fail subjects)
 
 ### 🔗 Live Link
-[View Venn Diagram](https://yourusername.github.io/venn-gpa/)
+[View Venn Diagram](https://barneelray.github.io/venn-gpa-visual/)
